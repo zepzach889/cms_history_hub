@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>History Day Hub</title>
+<meta name="description" content="Student hub for National History Day: checkpoints, research tools, and saved work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@500;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap topbar">
+    <div class="brand">History Day Hub<small>Innovation in History: Impact, Influence, Change</small></div>
+    <nav aria-label="Main">
+      <button data-go="week" aria-current="page">This Week</button>
+      <button data-go="checkpoints">Checkpoints</button>
+      <button data-go="tools">Tools</button>
+      <button data-go="mywork">My Work</button>
+      <button data-go="research">Research</button>
+      <button data-go="rules">Rules</button>
+    </nav>
+    <button class="themebtn" id="themeBtn" aria-label="Switch light or dark mode">◐ Theme</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- ============ THIS WEEK ============ -->
+  <section id="week">
+    <div id="announce"></div>
+    <div class="passport">
+      <div class="passport-head">
+        <h2>My History Day passport</h2>
+        <p>Tap a stamp when you finish that checkpoint.</p>
+      </div>
+      <div class="stamps" id="stamps"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel" id="nextPanel"></div>
+      <div class="panel" id="labPanel"></div>
+    </div>
+  </section>
+
+  <!-- ============ CHECKPOINTS ============ -->
+  <section id="checkpoints" hidden>
+    <h2>Checkpoints</h2>
+    <p class="muted">Each checkpoint has a quick lesson, a self-check, and turn-in steps. Your workbook has the full version.</p>
+    <div id="cpList"></div>
+  </section>
+
+  <!-- ============ TOOLS ============ -->
+  <section id="tools" hidden>
+    <h2>Tools</h2>
+    <p class="muted">These tools only use <em>your</em> words. Your work saves on this device. Use <strong>Copy</strong> to paste it into your Google Doc.</p>
+    <div class="toolnav" id="toolNav"></div>
+    <div id="toolArea"></div>
+  </section>
+
+  <!-- ============ MY WORK ============ -->
+  <section id="mywork" hidden>
+    <h2>My Work</h2>
+    <p class="muted">Everything you've saved in the tools, in one place. Copy any section into your Google Doc.</p>
+    <div id="myworkBody"></div>
+  </section>
+
+  <!-- ============ RESEARCH ============ -->
+  <section id="research" hidden>
+    <h2>Research starting points</h2>
+    <p class="muted">Start with background (secondary) sources, then hunt for primary sources. Always write down where you found something.</p>
+    <div id="researchList"></div>
+  </section>
+
+  <!-- ============ RULES ============ -->
+  <section id="rules" hidden>
+    <h2>Category rules at a glance</h2>
+    <p class="muted">Junior Division (grades 6–8). Always double-check the official <a href="https://nhd.org/en/contest/" target="_blank" rel="noopener">NHD Rule Book</a>.</p>
+    <div class="tablewrap" id="rulesTable"></div>
+    <h3 style="margin-top:1.4rem">Every project also needs</h3>
+    <ul class="clean">
+      <li>A <strong>title page</strong> with only your title, name(s), division, category, and word counts</li>
+      <li>A <strong>process paper</strong> of 500 words or less that answers five questions: how you chose your topic and how it fits the theme, how you did your research, how you created your project, what your historical argument is, and why your topic is significant</li>
+      <li>An <strong>annotated bibliography</strong>, with primary and secondary sources listed separately</li>
+    </ul>
+    <h3 style="margin-top:1.4rem">AI and History Day</h3>
+    <div class="note warn"><strong>New this year:</strong> you may not use generative AI (like ChatGPT, Gemini, Claude, Copilot, or AI image makers) for any part of your project. Projects that break this rule can be disqualified. See <a href="https://nhd.org/en/resources/ai/" target="_blank" rel="noopener">NHD's AI guidance</a>.</div>
+    <div class="tablewrap"><table class="rules"><thead><tr><th>✓ Allowed</th><th>✗ Not allowed</th></tr></thead><tbody>
+      <tr><td>Spelling and grammar checkers</td><td>Asking AI for topic ideas</td></tr>
+      <tr><td>Bibliography generators, like EasyBib, NoodleTools, or this hub's Citation Builder</td><td>Asking AI to find sources, archives, or libraries</td></tr>
+      <tr><td>Library databases, search engines, and museum websites</td><td>Using AI to write, revise, or rewrite your words</td></tr>
+      <tr><td>Design programs (like Canva) for fonts, borders, and adjusting an existing image's brightness</td><td>Using AI to make images, videos, or audio</td></tr>
+      <tr><td>Help and feedback from your teacher, and the tools in this hub</td><td>Asking a chatbot for feedback on your work</td></tr>
+    </tbody></table></div>
+    <p class="muted" style="margin-top:.6rem">The tools in this hub don't use AI. They follow simple rules and only work with the words you type.</p>
+  </section>
+
+  <footer>
+    <p>Questions? Email your teacher, or bring them to History Day Lab (Mondays after school). Work saved here stays on this device only, so back it up in <strong>My Work</strong> often.</p>
+    <div class="row"><button class="btn ghost small" id="copyAll">Copy all my work</button></div>
+  </footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
