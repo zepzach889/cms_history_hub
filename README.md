@@ -9,6 +9,7 @@ A student hub for the after-school National History Day program: weekly schedule
 | `index.html` | The page itself | Rarely |
 | `config.js` | Dates, lab schedule, Classroom link, announcement | **Yes, each year** |
 | `app.js` | All the tools and logic | No |
+| `topics.js` | The Topic Explorer list (about 300 topics) | When the theme changes, or to add topics |
 | `style.css` | Colors, fonts, and layout | Only to change the look |
 
 ## Putting it on GitHub Pages
@@ -47,6 +48,10 @@ Everything that changes each year lives in `config.js`:
 3. Dates must be written as `"YYYY-MM-DD"`, with the quotes. Keep the commas at the ends of lines.
 
 The theme text appears in `index.html` (in the header). Search for "Innovation in History" and replace it with the new theme. The lesson text in `app.js` mentions the theme in a few places, too.
+
+## Updating the Topic Explorer
+
+The topic list lives in `topics.js`. Each topic is one line: name, where, when, time period code, region code, a "think about" question, and search terms. Copy an existing line to add a new one. When the NHD theme changes, update the "think about" questions to match.
 
 ## How student work is saved
 

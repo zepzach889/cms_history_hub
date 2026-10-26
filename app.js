@@ -2,7 +2,7 @@
    Settings live in config.js. */
 /* ===================== LESSONS ===================== */
 const LESSONS = {
-  1:{ learn:["A strong topic passes four tests: you care about it, it has a clear innovation that caused change, it's narrow enough, and you can find sources.","Narrow a big idea by adding a <strong>where</strong>, a <strong>when</strong>, and a <strong>what exactly</strong>.","Show change over time: Before → Innovation → After → So What?","Can you find 3 primary sources in about 30 minutes? If not, try your #2 idea.","<strong>No generative AI</strong> (like ChatGPT) for any part of your project, including topic ideas. See the Rules tab for what's allowed."],
+  1:{ learn:["A strong topic passes four tests: you care about it, it has a clear innovation that caused change, it's narrow enough, and you can find sources.","Narrow a big idea by adding a <strong>where</strong>, a <strong>when</strong>, and a <strong>what exactly</strong>.","Show change over time: Before → Innovation → After → So What?","Can you find 3 primary sources in about 30 minutes? If not, try your #2 idea.","Need ideas? Browse the <strong>Topic Explorer</strong> tab and save the ones that spark your curiosity.","<strong>No generative AI</strong> (like ChatGPT) for any part of your project, including topic ideas. See the Rules tab for what's allowed."],
       checks:["Brainstorm at least 4 ideas and pick a top 3","Narrow your topic with a funnel (where, when, what)","Fill in the theme connection","Find 3 primary sources","Choose a category and decide solo or group"], tools:["funnel","theme"] },
   2:{ learn:["Start with background (secondary) sources: textbook, encyclopedia, library books, museum or university websites.","Take short notes in your own words. Always write down the source first.","Fact questions (who, what, when, where) have one answer. Thinking questions (why, how) need evidence.","Your focus questions should be thinking questions. Pick one BIG question for your whole project."],
       checks:["Take notes from at least 2 background sources","Write the title and author for each source","Use your own words in your notes","Write 3–5 focus questions that start with why or how","Write one BIG question for your whole project"], tools:["questions"] },
@@ -51,6 +51,7 @@ function go(id){
   document.querySelectorAll("nav button").forEach(b => b.setAttribute("aria-current", b.dataset.go === id ? "page" : "false"));
   try { history.replaceState(null, "", "#" + id); } catch(e) {}
   if (id === "mywork") renderMyWork();
+  if (id === "explorer") initExplorer();
   window.scrollTo(0,0);
 }
 document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => go(b.dataset.go)));
@@ -543,7 +544,7 @@ function funnelText(){ const f = get("funnel", {}); return `TOPIC FUNNEL\nBig id
 function themeText(){ const t = get("theme", {}); return `THEME CONNECTION\nTopic: ${t.topic||""}\nBefore: ${t.before||""}\nThe Innovation: ${t.innov||""}\nAfter: ${t.after||""}\nSo What?: ${t.sowhat||""}`; }
 function questionsText(){ return `FOCUS QUESTIONS\n${get("questions",[]).map((q,i)=>`${i+1}. ${q}`).join("\n")}\n\nBIG QUESTION\n${get("bigq","")}`; }
 function thesisText(){ return `MY THESIS\n${(get("thesis",{}).draft)||""}`; }
-function allText(){ return ["MY HISTORY DAY WORK", funnelText(), themeText(), questionsText(), bibText(), cardsText(), mapText(), thesisText()].join("\n\n"); }
+function allText(){ return ["MY HISTORY DAY WORK", ideasText(), funnelText(), themeText(), questionsText(), bibText(), cardsText(), mapText(), thesisText()].join("\n\n"); }
 
 /* ===================== BACKUP ===================== */
 const BACKUP_PREFIX = "HISTORYDAY-BACKUP:";
@@ -582,6 +583,7 @@ function renderMyWork(){
         <button class="btn ghost" id="bkCheck">Check this code</button><div id="bkMsg"></div>
       </details>
     </div>
+    ${sec("ideas", "Topic ideas", null, ideasAll().length ? `<ul class="clean">${ideasAll().map((i, k) => `<li>${esc(i.name)} <span class="muted">(${esc(i.where)}, ${esc(i.when)})</span> <button class="btn ghost small" data-delidea="${k}">Remove</button></li>`).join("")}</ul>` : blank("No saved ideas yet. Browse the Topic Explorer and tap ☆ to save ideas."), ideasText)}
     ${sec("funnel", "Topic funnel", "funnel", (f.big || f.focus) ? `<div class="funnel small">${[f.big,f.n1,f.n2,f.focus].map(x=>`<div>${esc(x)||"&nbsp;"}</div>`).join("")}</div>` : blank("Not started yet."), funnelText)}
     ${sec("theme", "Theme connection", "theme", (t.before||t.innov||t.after||t.sowhat) ? `<dl class="mwdl">${[["Before",t.before],["The Innovation",t.innov],["After",t.after],["So What?",t.sowhat]].map(([l,v])=>`<dt>${l}</dt><dd>${esc(v)||"<span class='muted'>(blank)</span>"}</dd>`).join("")}</dl>` : blank("Not started yet."), themeText)}
     ${sec("questions", "Focus questions", "questions", (qs.length || get("bigq","")) ? `<ol class="clean">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol><p><strong>BIG question:</strong> ${esc(get("bigq","")) || "<span class='muted'>(not written yet)</span>"}</p>` : blank("No questions saved yet."), questionsText)}
@@ -590,9 +592,10 @@ function renderMyWork(){
     ${sec("map", "Evidence map", "map", starred.length ? ["B","I","A"].map(tg => `<h4 style="margin:.5rem 0 .2rem">${TAGS[tg]}</h4><ul class="clean">${starred.filter(c=>c.tag===tg).map(c=>`<li>${cardNoteHTML(c)} <span class="muted">(${esc(cardSrcLabel(c))})</span></li>`).join("") || "<li class='muted'>Nothing starred yet.</li>"}</ul>`).join("") + `<h4 style="margin:.5rem 0 .2rem">So What?</h4><p>${esc(get("soWhat","")) || "<span class='muted'>(not written yet)</span>"}</p>` : blank("Star note cards to build your evidence map."), mapText)}
     ${sec("thesis", "Thesis", "thesis", th.draft ? `<p class="bigthesis">${esc(th.draft)}</p>` : blank("No thesis yet."), thesisText)}
   `;
-  const copiers = { funnel: funnelText, theme: themeText, questions: questionsText, cards: cardsText, map: mapText, thesis: thesisText };
+  const copiers = { ideas: ideasText, funnel: funnelText, theme: themeText, questions: questionsText, cards: cardsText, map: mapText, thesis: thesisText };
   box.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => b.dataset.copy === "bib" ? copyText(bibText(), bibHTML()) : copyText(copiers[b.dataset.copy]()));
   box.querySelectorAll("[data-open]").forEach(b => b.onclick = () => { go("tools"); openTool(b.dataset.open); });
+  box.querySelectorAll("[data-delidea]").forEach(b => b.onclick = () => { const l = ideasAll(); l.splice(+b.dataset.delidea, 1); set("ideas", l); renderMyWork(); });
   renderBib($("#mwBib"));
   bindCardButtons($("#mw-cards"), renderMyWork);
   $("#bkMake").onclick = () => {
@@ -633,8 +636,88 @@ function renderMyWork(){
 /* ===================== COPY ALL ===================== */
 $("#copyAll").onclick = () => copyText(allText());
 
+/* ===================== TOPIC EXPLORER ===================== */
+const ideasAll = () => get("ideas", []);
+function ideasText(){ return "MY TOPIC IDEAS\n" + ideasAll().map(i => `- ${i.name} (${i.where}, ${i.when})`).join("\n"); }
+function topicKey(t){ return t[0] + "|" + t[1]; }
+function saveIdea(t, area, sub){
+  const list = ideasAll();
+  if (list.some(i => i.key === topicKey(t))) { toast("Already in your ideas."); return; }
+  list.push({ key: topicKey(t), name: t[0], where: t[1], when: t[2], area, sub }); set("ideas", list); toast("Saved to your topic ideas!");
+}
+function startFunnel(t, area, sub, btn){
+  const f = get("funnel", {});
+  if ((f.big || f.n1 || f.n2 || f.focus) && !(btn && btn.dataset.sure)) {
+    if (btn) { btn.dataset.sure = "1"; btn.textContent = "Replace my funnel? Tap again"; }
+    return;
+  }
+  set("funnel", { big: area, n1: sub, n2: `${t[0]} (${t[1]}, ${t[2]})`, focus: "" });
+  go("tools"); openTool("funnel"); toast("Now narrow it down to a focused topic!");
+}
+function topicCard(t, area, sub){
+  const saved = ideasAll().some(i => i.key === topicKey(t));
+  return `<div class="topiccard">
+    <h4>${esc(t[0])}</h4>
+    <p class="tc-meta">${esc(t[1])} · ${esc(t[2])}</p>
+    <p class="tc-q"><strong>Think about:</strong> ${esc(t[5])}</p>
+    <p class="tc-s"><strong>Try searching:</strong> ${esc(t[6]).split(";").map(x => `<span class="chip">${x.trim()}</span>`).join(" ")}</p>
+    <div class="row"><button class="btn small ${saved ? "ghost" : ""}" data-save="${esc(topicKey(t))}">${saved ? "★ Saved" : "☆ Save to my ideas"}</button><button class="btn ghost small" data-funnel="${esc(topicKey(t))}">Start a funnel</button></div>
+  </div>`;
+}
+function renderExplorer(){
+  const box = $("#explorerBody"); const st = get("explorer", { q: "", era: "", region: "", area: "" });
+  const lookup = {};
+  const match = (t, area, sub) => {
+    if (st.era && t[3] !== st.era) return false;
+    if (st.region && t[4] !== st.region) return false;
+    if (st.area && area !== st.area) return false;
+    if (st.q) { const hay = (t.join(" ") + " " + area + " " + sub).toLowerCase(); if (!st.q.toLowerCase().split(/\s+/).every(w => hay.includes(w))) return false; }
+    return true;
+  };
+  let count = 0;
+  const filtering = st.q || st.era || st.region || st.area;
+  const html = TOPICS.map(A => {
+    const subs = A.subs.map(S => {
+      const ts = S.topics.filter(t => match(t, A.area, S.name));
+      ts.forEach(t => { lookup[topicKey(t)] = [t, A.area, S.name]; });
+      count += ts.length;
+      return ts.length ? `<h4 class="subhead">${esc(S.name)} <span class="muted">(${ts.length})</span></h4><div class="topicgrid">${ts.map(t => topicCard(t, A.area, S.name)).join("")}</div>` : "";
+    }).join("");
+    if (!subs) return "";
+    const n = A.subs.reduce((k, S) => k + S.topics.filter(t => match(t, A.area, S.name)).length, 0);
+    return `<details class="area" ${filtering ? "open" : ""}><summary><span class="areatitle">${esc(A.area)}</span><span class="muted">${n} topics</span></summary><div class="areabody">${subs}</div></details>`;
+  }).join("");
+  $("#explorerResults").innerHTML = (filtering ? `<p class="muted">${count} topic${count === 1 ? "" : "s"} found.</p>` : "") + (html || `<p class="muted">No topics match. Try fewer words or clear the filters.</p>`);
+  $("#explorerResults").querySelectorAll("[data-save]").forEach(b => b.onclick = () => { const [t, a, s] = lookup[b.dataset.save]; saveIdea(t, a, s); b.textContent = "★ Saved"; b.classList.add("ghost"); renderIdeasMini(); });
+  $("#explorerResults").querySelectorAll("[data-funnel]").forEach(b => b.onclick = () => { const [t, a, s] = lookup[b.dataset.funnel]; startFunnel(t, a, s, b); });
+}
+function renderIdeasMini(){
+  const list = ideasAll();
+  $("#ideasMini").innerHTML = list.length ? `<strong>My saved ideas (${list.length}):</strong> ${list.map(i => esc(i.name)).join(" · ")} <button class="linkbtn" id="ideasGo">See them in My Work</button>` : `<span class="muted">Tap ☆ on any topic to save it to your ideas.</span>`;
+  const g = $("#ideasGo"); if (g) g.onclick = () => go("mywork");
+}
+function initExplorer(){
+  const st = get("explorer", { q: "", era: "", region: "", area: "" });
+  $("#explorerBody").innerHTML = `
+    <div class="note"><strong>These are starting points, not finished topics.</strong> Pick one that sparks your curiosity, then narrow it down with the Topic Funnel and test it for primary sources. You can also choose a topic that isn't on this list!</div>
+    <div class="filters">
+      <div class="field"><label for="exQ">Search</label><input type="text" id="exQ" placeholder="Try: medicine, Rome, music, Oregon..." value="${esc(st.q)}"></div>
+      <div class="field"><label for="exArea">Big area</label><select id="exArea"><option value="">All areas</option>${TOPICS.map(A => `<option ${st.area === A.area ? "selected" : ""}>${esc(A.area)}</option>`).join("")}</select></div>
+      <div class="field"><label for="exEra">Time period</label><select id="exEra"><option value="">All time periods</option>${Object.entries(ERAS).map(([k, v]) => `<option value="${k}" ${st.era === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+      <div class="field"><label for="exRegion">Region</label><select id="exRegion"><option value="">All regions</option>${Object.entries(REGIONS).map(([k, v]) => `<option value="${k}" ${st.region === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+    </div>
+    <div class="row" style="margin-bottom:1rem"><button class="btn ghost small" id="exClear">Clear filters</button></div>
+    <p id="ideasMini" class="ideasmini"></p>
+    <div id="explorerResults"></div>`;
+  const upd = () => { set("explorer", { q: $("#exQ").value.trim(), era: $("#exEra").value, region: $("#exRegion").value, area: $("#exArea").value }); renderExplorer(); };
+  let timer; $("#exQ").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(upd, 200); });
+  ["#exEra", "#exRegion", "#exArea"].forEach(id => $(id).addEventListener("change", upd));
+  $("#exClear").onclick = () => { set("explorer", { q: "", era: "", region: "", area: "" }); initExplorer(); };
+  renderIdeasMini(); renderExplorer();
+}
+
 /* ===================== START ===================== */
 renderStamps(); renderWeek(); renderCheckpoints(); renderToolNav(); renderResearch(); renderRules();
 if (CONFIG.teacherEmail) { const p = document.querySelector("footer p"); if (p) p.innerHTML = p.innerHTML.replace("Email your teacher", `Email your teacher (<a href="mailto:${esc(CONFIG.teacherEmail)}">${esc(CONFIG.teacherEmail)}</a>)`); }
 const start = (location.hash || "").slice(1);
-if (["week","checkpoints","tools","mywork","research","rules"].includes(start)) go(start);
+if (["week","checkpoints","explorer","tools","mywork","research","rules"].includes(start)) go(start);

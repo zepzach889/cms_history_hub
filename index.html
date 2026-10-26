@@ -19,6 +19,7 @@
     <nav aria-label="Main">
       <button data-go="week" aria-current="page">This Week</button>
       <button data-go="checkpoints">Checkpoints</button>
+      <button data-go="explorer">Topic Explorer</button>
       <button data-go="tools">Tools</button>
       <button data-go="mywork">My Work</button>
       <button data-go="research">Research</button>
@@ -50,6 +51,13 @@
     <h2>Checkpoints</h2>
     <p class="muted">Each checkpoint has a quick lesson, a self-check, and turn-in steps. Your workbook has the full version.</p>
     <div id="cpList"></div>
+  </section>
+
+  <!-- ============ TOPIC EXPLORER ============ -->
+  <section id="explorer" hidden>
+    <h2>Topic Explorer</h2>
+    <p class="muted">Browse hundreds of innovations from every time and place. Open a big area, or search and filter.</p>
+    <div id="explorerBody"></div>
   </section>
 
   <!-- ============ TOOLS ============ -->
@@ -105,6 +113,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="config.js"></script>
+<script src="topics.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
